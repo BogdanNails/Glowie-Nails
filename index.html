@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Glowie Nails</title>
+
+  <!-- Playfair Display -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --blush: #F6D0D6;
+      --soft-beige: #F4EBE2;
+      --ivory: #FFF3F7;
+      --black: #1A1A1A;
+      --dusty: #DCA0A0;
+      --gold: #DCC2A1;
+      --font: "Playfair Display", serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--black);
+      background:var(--ivory);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Sticky top bar (hidden by default, appears on scroll) */
+    header.topbar{
+      position:fixed;
+      left:0; right:0;
+      top:0;
+      height:72px;
+      display:flex;
+      align-items:center;
+      padding:0 20px;
+      z-index:50;
+      transition:transform .35s, background-color .35s, box-shadow .35s;
+      transform: translateY(-100%);
+      background: var(--blush);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    header.topbar.visible{ transform: translateY(0); }
+    header.topbar img.logo-small{
+      height:48px;
+    }
+    header.topbar h1{ margin:0 0 0 12px; font-size:20px; letter-spacing:1px; }
+
+    /* Hero */
+    .hero{
+      min-height:100vh;
+      padding:60px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:28px;
+      background: linear-gradient(180deg, var(--ivory) 0%, var(--soft-beige) 100%);
+    }
+    .hero .logo{
+      max-width:480px;
+      width:70%;
+      object-fit:contain;
+    }
+    .hero .descr{
+      max-width:900px;
+      text-align:center;
+      font-size:20px;
+      color:var(--black);
+      padding:0 12px;
+    }
+    .hero .photo-and-text{
+      display:flex;
+      gap:24px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .hero .portrait{
+      width:160px;
+      height:160px;
+      border-radius:12px;
+      object-fit:cover;
+      box-shadow:0 8px 20px rgba(0,0,0,0.08);
+      border:6px solid var(--ivory);
+    }
+
+    /* Gallery section */
+    .gallery-section{
+      padding:40px 20px;
+      background:var(--ivory);
+    }
+    .gallery-wrap{
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .gallery-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .gallery-header h2{ margin:0; font-size:28px; }
+    .carousel{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      width:100%;
+    }
+    .thumb{
+      background:var(--soft-beige);
+      border-radius:10px;
+      overflow:hidden;
+      height:150px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .thumb img{ width:100%; height:100%; object-fit:cover; }
+
+    .carousel-controls{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .arrow{
+      border:none;
+      background:var(--dusty);
+      color:white;
+      padding:10px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .book-btn{
+      display:block;
+      width:240px;
+      margin:18px auto;
+      padding:12px 18px;
+      border-radius:12px;
+      background:var(--blush);
+      color:var(--black);
+      font-weight:600;
+      border:none;
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    /* Black contact strip */
+    footer.contact-strip{
+      background:var(--black);
+      color:var(--ivory);
+      padding:28px 18px;
+    }
+    .contact-inner{
+      max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:12px;
+      flex-wrap:wrap;
+    }
+    .contact-list{ display:flex; gap:18px; align-items:center; }
+    .contact-item{ display:flex; flex-direction:column; align-items:center; font-size:14px; }
+    .contact-item img{ width:28px; height:28px; margin-bottom:8px; filter:brightness(10); }
+
+    /* small screens */
+    @media (max-width:700px){
+      .grid{ grid-template-columns: repeat(2,1fr); }
+      .hero .logo{ width:85%; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Topbar (hidden until scroll) -->
+  <header class="topbar" id="topbar">
+    <img src="LOGO_GLOWIE.png" class="logo-small" alt="Glowie logo">
+    <h1>Glowie Nails</h1>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="LOGO_GLOWIE.png" alt="Glowie Nails" class="logo">
+    <div class="photo-and-text">
+      <!-- Modifierul descrierii: schimbă textul aici -->
+      <p class="descr" id="descrText">
+       Bogdan — Nail Artist Certificat <br> Redefinind eleganța prin perfecțiune. <br>📍Baia Mare | By appointment only.
+      </p>
+    </div>
+  </section>
+
+  <!-- Gallery + CTA -->
+  <section class="gallery-section" id="gallery">
+    <div class="gallery-wrap">
+      <div class="gallery-header">
+        <h2>Galerie</h2>
+        <div class="carousel-controls">
+          <button class="arrow" id="prevBtn">&larr;</button>
+          <button class="arrow" id="nextBtn">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="carousel">
+        <div class="grid" id="gridContainer">
+          <!-- JS va popula 6 imagini (3x2) aici -->
+        </div>
+      </div>
+
+      <button class="book-btn" id="goToBooking">Programează-te Aici</button>
+    </div>
+  </section>
+
+  <!-- Contact strip -->
+  <footer class="contact-strip">
+    <div class="contact-inner">
+      <div>
+        <h3 style="margin:0 0 8px 0">Contact</h3>
+        <p style="margin:0 0 6px 0">Mă puteți contacta și aici</p>
+      </div>
+
+      <div class="contact-list">
+        <!-- Înlocuiește link-urile cu cele reale -->
+        <div class="contact-item">
+          <img src="whatsapp-icon.png" alt="WhatsApp">
+          <a href="https://wa.me/40744133284" style="color:var(--ivory); text-decoration:none;">WhatsApp</a>
+        </div>
+        <div class="contact-item">
+          <img src="facebook-icon.png" alt="Facebook">
+          <a href="https://facebook.com/profile.php?id=61582319150319" style="color:var(--ivory); text-decoration:none;">Facebook</a>
+        </div>
+        <div class="contact-item">
+          <img src="instagram-icon.png" alt="Instagram">
+          <a href="https://instagram.com/_glowie_nails_" style="color:var(--ivory); text-decoration:none;">Instagram</a>
+        </div>
+        <div class="contact-item">
+          <img src="phone-icon.png" alt="Phone">
+          <span>+40 744 133 284</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  // JS: bara sticky (logo care apare sus) + galerie carousel + buton progr.
+  const topbar = document.getElementById('topbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > window.innerHeight * 0.25) topbar.classList.add('visible');
+    else topbar.classList.remove('visible');
+  });
+
+  // Gallery images -> înlocuiește cu pozele tale: gallery1.jpg ... galleryN.jpg
+  const galleryImgs = [
+    'nail1.jpg','nail2.jpg','nail3.jpg','nail4.jpg','nail5.jpg','nail6.jpg',
+    'nail7.jpg','nail8.jpg','nail9.jpg'
+  ];
+  let pageIndex = 0;
+  const perPage = 6;
+  const grid = document.getElementById('gridContainer');
+
+  function renderPage(){
+    grid.innerHTML = '';
+    const start = pageIndex * perPage;
+    const slice = galleryImgs.slice(start, start + perPage);
+    // dacă mai puține imagini, completăm golurile
+    for (let i=0;i<perPage;i++){
+      const div = document.createElement('div');
+      div.className = 'thumb';
+      const img = document.createElement('img');
+      img.src = slice[i] || 'placeholder.jpg';
+      img.alt = 'UNGHIE ' + (start + i + 1);
+      div.appendChild(img);
+      grid.appendChild(div);
+    }
+  }
+  document.getElementById('prevBtn').addEventListener('click', ()=> {
+    if (pageIndex > 0) pageIndex--;
+    renderPage();
+  });
+  document.getElementById('nextBtn').addEventListener('click', ()=> {
+    if ((pageIndex+1)*perPage < galleryImgs.length) pageIndex++;
+    renderPage();
+  });
+  renderPage();
+
+  // buton duce la pagina booking
+  document.getElementById('goToBooking').addEventListener('click', () => {
+    window.location.href = 'booking.html';
+  });
+</script>
+</body>
+</html>
+

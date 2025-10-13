@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Programare Glowie Nails</title>
+  <style>
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #fffafc;
+      color: #4a2c2a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 420px;
+    }
+
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #e3b5c8;
+      font-family: inherit;
+      font-size: 15px;
+      color: #4a2c2a;
+    }
+
+    textarea {
+      resize: none;
+      height: 90px;
+    }
+
+    button {
+      background-color: #f7c5d4;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #f5a9c0;
+    }
+
+    /* Spinner */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #f5a9c0;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Mesaj succes */
+    .success-message {
+      text-align: center;
+      background: white;
+      padding: 40px 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      font-size: 18px;
+      max-width: 400px;
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <form id="bookingForm">
+      <h2>Programare Glowie Nails 💅</h2>
+      <label>Nume complet</label>
+      <input type="text" name="nume" placeholder="Nume și prenume" required />
+      
+      <label>Telefon</label>
+      <input type="tel" name="telefon" placeholder="Număr de telefon" required />
+
+      <label>Data</label>
+      <input type="date" name="data" id="data" required />
+
+      <label>Oră</label>
+      <select name="ora" id="ora" required>
+        <option value="">Selectează ora</option>
+        <option value="15:00">15:00</option>
+        <option value="17:00">17:00</option>
+        <option value="19:00">19:00</option>
+      </select>
+
+      <label>Detalii unghii </label>
+      <textarea name="detalii" placeholder="Lungime, formă etc." required></textarea>
+
+      <label>Model/Inspiratie (opțional):</label>
+      <input type="file" name="imagine" accept="image/*" />
+
+      <button type="submit">Trimite Programarea</button>
+    </form>
+
+    <div id="spinnerContainer" class="hidden">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="successMessage" class="success-message">
+      Programarea a fost trimisă cu succes! 💖<br>
+      Veți fi contactat/ă cât de curând pe WhatsApp, vă mulțumim!
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('bookingForm');
+    const spinnerContainer = document.getElementById('spinnerContainer');
+    const successMessage = document.getElementById('successMessage');
+    const dateInput = document.getElementById('data');
+    const oraSelect = document.getElementById('ora');
+
+    const sheetDBUrl = "https://sheetdb.io/api/v1/tof3zdoj1um9i";
+    const imgbbKey = "80601f4e1bfd0accfb01720f043a97b6";
+
+    // Data minimă: doar de mâine încolo
+    const azi = new Date();
+    azi.setDate(azi.getDate() + 1);
+    dateInput.min = azi.toISOString().split("T")[0];
+
+    // Când se selectează data, verificăm orele ocupate
+    dateInput.addEventListener('change', async () => {
+      const dataAleasa = dateInput.value;
+      if (!dataAleasa) return;
+
+      const res = await fetch(`${sheetDBUrl}/search?data=${dataAleasa}`);
+      const rezervari = await res.json();
+      const oreOcupate = rezervari.map(r => r.ora);
+
+      [...oraSelect.options].forEach(opt => {
+        if (oreOcupate.includes(opt.value)) {
+          opt.disabled = true;
+          opt.textContent = `${opt.value} (ocupat)`;
+        } else if (opt.value) {
+          opt.disabled = false;
+          opt.textContent = opt.value;
+        }
+      });
+    });
+
+    // Trimiterea formularului
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      form.classList.add("hidden");
+      spinnerContainer.classList.remove("hidden");
+
+      const fd = new FormData(form);
+      const file = fd.get("imagine");
+      let imagineURL = "";
+
+      // Upload imagine dacă există
+      if (file && file.size > 0) {
+        const imgData = new FormData();
+        imgData.append("image", file);
+
+        const upload = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
+          method: "POST",
+          body: imgData
+        });
+        const json = await upload.json();
+        imagineURL = json.data.url;
+      }
+
+      const payload = {
+        data: [{
+          nume: fd.get("nume"),
+          telefon: fd.get("telefon"),
+          data: fd.get("data"),
+          ora: fd.get("ora"),
+          detalii: fd.get("detalii"),
+          imagine: imagineURL || "Nicio imagine"
+        }]
+      };
+
+      const response = await fetch(sheetDBUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      spinnerContainer.classList.add("hidden");
+
+      if (response.ok) {
+        successMessage.style.display = "block";
+        setTimeout(() => {
+          successMessage.style.display = "none";
+          form.classList.remove("hidden");
+          form.reset();
+        }, 2500);
+      } else {
+        alert("A apărut o eroare la trimiterea formularului, te rugăm să încerci din nou!");
+        form.classList.remove("hidden");
+      }
+    });
+  </script>
+
+</body>
+</html>
